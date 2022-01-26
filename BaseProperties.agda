@@ -63,3 +63,6 @@ record _subtype_of_ (A B : Set l) (H : A -> Set l) : Set l where
     preserves-H : forall b -> H (from b)
     subt-bij-BAB : forall a -> (h : H a) -> from (to a h) === a
     subt-bij-ABA : forall b -> to (from b) (preserves-H b) === b
+
+_elem_ : {A : Set l} -> A -> (A -> Set l) -> Set l
+x elem P = P x
