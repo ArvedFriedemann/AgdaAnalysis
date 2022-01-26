@@ -3,6 +3,9 @@ module Group where
 open import AgdaAsciiPrelude.AsciiPrelude renaming (_*_ to _*-nat_)
 open import BaseProperties
 
+open import Data.Integer hiding (suc) renaming (ℤ to Zet; _+_ to _+z_; _*_ to _*z_)
+open import Data.Integer hiding (ℤ; _+_; _*_; suc)
+
 private
   variable
     l l' l1 l2 l3 : Level
@@ -53,6 +56,16 @@ record Group (A : Set l) : Set l where
     group-props : GroupProp A e (_^-1) (_*_)
   open GroupProp group-props public
 
+  _pow-1_ : A -> Nat -> A
+  _ pow-1 zero = e
+  x pow-1 (suc n) = (x ^-1) * (x pow-1 n)
+
+  _pow_ : A -> Zet -> A
+  _ pow +0 = e
+  x pow (+[1+ n ]) = x * (x pow (+ n))
+  x pow (-[1+ n ]) = x pow-1 (suc n)
+
+
 record FiniteGroup (A : Set l) : Set l where
   field
     group-finite : Group A
@@ -83,6 +96,20 @@ record Subgroup {A : Set l} (G : Group A) (H : A -> Set l) : Set l where
     sg-inv-preserve : forall a -> H (a ^-1)
 
 
-subgroup-preserve-group : {A B : Set l} {G : Group A} {H : A -> Set l}  ->
+subgroup-preserve-group-2-1-15 : {A B : Set l} {G : Group A} {H : A -> Set l}  ->
   A subtype B of H -> Subgroup G H -> Group B
-subgroup-preserve-group = {!!}
+subgroup-preserve-group-2-1-15 = {!!}
+
+module 2-1-16 {A : Set l} {G : Group A} {H : A -> Set l}  where
+  open Group G
+  2-1-16a : Subgroup G H -> forall a b -> H ((a * b) ^-1)
+  2-1-16a = {!!}
+  2-1-16b : forall a b -> H ((a * b) ^-1) -> Subgroup G H
+  2-1-16b = {!!}
+
+
+record CyclicGroupProp {A : Set l} (G : Group A) : Set l where
+  open Group G
+  field
+    g : A
+    cyc-prop : forall (x : A) -> exists n st (g pow n === x)
