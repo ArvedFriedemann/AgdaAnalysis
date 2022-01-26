@@ -113,3 +113,8 @@ record CyclicGroupProp {A : Set l} (G : Group A) : Set l where
   field
     g : A
     cyc-prop : forall (x : A) -> exists n st (g pow n === x)
+
+<[_]>_ : {A : Set l} -> A -> Group A -> A -> Set l
+<[_]>_ {A = A} g G x = exists n st (g pow n === x)
+  where
+    open Group G
