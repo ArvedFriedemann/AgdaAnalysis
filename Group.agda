@@ -72,12 +72,12 @@ record FiniteGroup (A : Set l) : Set l where
     finA : Sized A
   open Group group-finite public
 
-module GroupOps where
-  I_I : FiniteGroup A -> Nat
-  I g I = size
-    where
-      open FiniteGroup g
-      open Sized finA
+
+I_I : FiniteGroup A -> Nat
+I g I = size
+  where
+    open FiniteGroup g
+    open Sized finA
 
 
 record AbelianGroup (A : Set l) : Set l where
@@ -138,3 +138,9 @@ data Order-in-Group {A : Set l} (g : A) (G : Group A) : (Zet or (Infty {l})) -> 
     --TODO: number needs to be positive
   oig : let open Group G in (r : Zet) -> r is-minimum-wrt _<z_ and (\r' -> g pow r' === e) -> Order-in-Group g G (left r)
   inf-ord : let open Group G in ¬(exists r st (g pow r === e)) -> Order-in-Group g G (right top)
+
+{-
+2-2-5 : {g : A} {G : Group A} {r : Zet} ->
+  Order-in-Group g G (left r) -> exists H of FiniteGroup A st
+  (exists H' of (Subgroup G (<[ g ]> G)) st (H === H')) and (I H I === r)
+-}
