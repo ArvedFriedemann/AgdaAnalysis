@@ -66,29 +66,21 @@ record Group (A : Set l) : Set l where
   x pow (-[1+ n ]) = x pow-1 (suc n)
 
 
-record FiniteGroup (A : Set l) : Set l where
-  field
-    group-finite : Group A
-    finA : Sized A
-  open Group group-finite public
+FiniteGroup : Group A -> Set _
+FiniteGroup {A = A} _ = Sized A
 
 
-I_I : FiniteGroup A -> Nat
-I g I = size
-  where
-    open FiniteGroup g
-    open Sized finA
+I_I : (G : Group A) -> {fin : FiniteGroup G} -> Nat
+I _ I {fin = fin} = let open Sized fin in size
 
 
-record AbelianGroup (A : Set l) : Set l where
-  field
-    group-abel : Group A
-  open Group group-abel public
+record AbelianGroupProp {A : Set l} (G : Group A) : Set l where
+  open Group G public
   field
     group-comm : Commutativity (_*_)
 
 
-record Subgroup {A : Set l} (G : Group A) (H : A -> Set l) : Set l where
+record SubgroupProp {A : Set l} (G : Group A) (H : A -> Set l) : Set l where
   open Group G public
   field
     sg-nonempty : exists a st H a
@@ -97,14 +89,23 @@ record Subgroup {A : Set l} (G : Group A) (H : A -> Set l) : Set l where
 
 
 subgroup-preserve-group-2-1-15 : {A B : Set l} {G : Group A} {H : A -> Set l}  ->
-  A subtype B of H -> Subgroup G H -> Group B
+  A subtype B of H -> SubgroupProp G H -> Group B
 subgroup-preserve-group-2-1-15 = {!!}
+
+record Subgroup {A : Set l} (G : Group A) (H : A -> Set l) : Set (lsuc l) where
+  field
+    Subcarrier : Set l
+    sub-group-prop : SubgroupProp G H
+    sub-type : A subtype Subcarrier of H
+  subgroup : Group Subcarrier
+  subgroup = subgroup-preserve-group-2-1-15 sub-type sub-group-prop
+  open Group subgroup public
 
 module 2-1-16 {A : Set l} {G : Group A} {H : A -> Set l}  where
   open Group G
-  2-1-16a : Subgroup G H -> forall a b -> H ((a * b) ^-1)
+  2-1-16a : SubgroupProp G H -> forall a b -> H ((a * b) ^-1)
   2-1-16a = {!!}
-  2-1-16b : forall a b -> H ((a * b) ^-1) -> Subgroup G H
+  2-1-16b : forall a b -> H ((a * b) ^-1) -> SubgroupProp G H
   2-1-16b = {!!}
 
 
@@ -125,10 +126,9 @@ record CyclicGroup (A : Set l) : Set l where
   where
     open Group G
 
-module AbelianCyclic where
-  open AbelianGroup
-  2-2-2 : {A : Set l} -> (G : AbelianGroup A) -> CyclicGroupProp (group-abel G)
-  2-2-2 G = {!!}
+
+2-2-2 : {A : Set l} -> (G : Group A) -> (AbelianGroupProp G) -> CyclicGroupProp G
+2-2-2 G abel = {!!}
 
 Infty : Set l
 Infty = T
@@ -139,8 +139,9 @@ data Order-in-Group {A : Set l} (g : A) (G : Group A) : (Zet or (Infty {l})) -> 
   oig : let open Group G in (r : Zet) -> r is-minimum-wrt _<z_ and (\r' -> g pow r' === e) -> Order-in-Group g G (left r)
   inf-ord : let open Group G in ¬(exists r st (g pow r === e)) -> Order-in-Group g G (right top)
 
-{-
+
 2-2-5 : {g : A} {G : Group A} {r : Zet} ->
-  Order-in-Group g G (left r) -> exists H of FiniteGroup A st
-  (exists H' of (Subgroup G (<[ g ]> G)) st (H === H')) and (I H I === r)
--}
+  Order-in-Group g G (left r) ->
+  exists H of Subgroup G (<[ g ]> G) st let open Subgroup H in
+  exists fin of FiniteGroup subgroup st (+ (I subgroup I {fin = fin}) === r)
+2-2-5 order = {!!}
