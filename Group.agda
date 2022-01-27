@@ -3,8 +3,8 @@ module Group where
 open import AgdaAsciiPrelude.AsciiPrelude renaming (_*_ to _*-nat_)
 open import BaseProperties
 
-open import Data.Integer hiding (suc) renaming (ℤ to Zet; _+_ to _+z_; _*_ to _*z_)
-open import Data.Integer hiding (ℤ; _+_; _*_; suc)
+open import Data.Integer hiding (suc) renaming (ℤ to Zet; _+_ to _+z_; _*_ to _*z_; _<_ to _<z_)
+open import Data.Integer hiding (ℤ; _+_; _*_; suc; _<_)
 
 private
   variable
@@ -114,7 +114,27 @@ record CyclicGroupProp {A : Set l} (G : Group A) : Set l where
     g : A
     cyc-prop : forall (x : A) -> exists n st (g pow n === x)
 
+record CyclicGroup (A : Set l) : Set l where
+  field
+    group-cyclic : Group A
+    cycl-prop : CyclicGroupProp group-cyclic
+  open Group group-cyclic public
+
 <[_]>_ : {A : Set l} -> A -> Group A -> A -> Set l
 <[_]>_ {A = A} g G x = exists n st (g pow n === x)
   where
     open Group G
+
+module AbelianCyclic where
+  open AbelianGroup
+  2-2-2 : {A : Set l} -> (G : AbelianGroup A) -> CyclicGroupProp (group-abel G)
+  2-2-2 G = {!!}
+
+Infty : Set l
+Infty = T
+
+
+data Order-in-Group {A : Set l} (g : A) (G : Group A) : (Zet or (Infty {l})) -> Set l where
+    --TODO: number needs to be positive
+  oig : let open Group G in (r : Zet) -> r is-minimum-wrt _<z_ and (\r' -> g pow r' === e) -> Order-in-Group g G (left r)
+  inf-ord : let open Group G in ¬(exists r st (g pow r === e)) -> Order-in-Group g G (right top)

@@ -66,3 +66,12 @@ record _subtype_of_ (A B : Set l) (H : A -> Set l) : Set l where
 
 _elem_ : {A : Set l} -> A -> (A -> Set l) -> Set l
 x elem P = P x
+
+
+_is-minimum-wrt_and_ : {A : Set l1} -> (a : A) -> (A -> A -> Set l2) -> (A -> Set l3) -> Set (l1 ~U~ l2 ~U~ l3)
+x is-minimum-wrt _<_ and P = P x and ¬(exists y st ((y < x) and (P y)))
+
+minimum-wrt : {A : Set l1} -> (A -> A -> Set l2) -> (A -> Set l3) -> Set (l1 ~U~ l2 ~U~ l3)
+minimum-wrt (_<_) P = exists x st  (x is-minimum-wrt _<_ and P)
+
+syntax minimum-wrt K (\x -> B) = minimum-wrt K has x st B
